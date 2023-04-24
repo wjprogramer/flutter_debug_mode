@@ -1,6 +1,9 @@
 package com.example.flutter_debug_mode
 
+import android.app.Activity
+import android.content.ContentResolver
 import androidx.annotation.NonNull
+import android.provider.Settings
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -15,15 +18,19 @@ class FlutterDebugModePlugin: FlutterPlugin, MethodCallHandler {
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
+  private lateinit var contentResolver : ContentResolver
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    // 也可以透過 activity.contentResolver 取得
+    contentResolver = flutterPluginBinding.applicationContext.contentResolver
+
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_debug_mode")
     channel.setMethodCallHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
+    if (call.method == "isDebugMode") {
+      checkingadb(call, result)
     } else {
       result.notImplemented()
     }
@@ -31,5 +38,15 @@ class FlutterDebugModePlugin: FlutterPlugin, MethodCallHandler {
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  private fun checkingadb(call: MethodCall, result: MethodChannel.Result) {
+    if (Settings.Secure.getInt(contentResolver, Settings.Secure.ADB_ENABLED, 0) === 1) {
+      // debugging enabled
+      result.success(true)
+    } else {
+      //;debugging does not enabled
+      result.success(false)
+    }
   }
 }

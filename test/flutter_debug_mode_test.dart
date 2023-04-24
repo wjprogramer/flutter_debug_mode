@@ -9,7 +9,7 @@ class MockFlutterDebugModePlatform
     implements FlutterDebugModePlatform {
 
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<bool> isDebugMode() => Future.value(false);
 }
 
 void main() {
@@ -24,6 +24,6 @@ void main() {
     MockFlutterDebugModePlatform fakePlatform = MockFlutterDebugModePlatform();
     FlutterDebugModePlatform.instance = fakePlatform;
 
-    expect(await flutterDebugModePlugin.getPlatformVersion(), '42');
+    expect(await flutterDebugModePlugin.isDebugMode(), '42');
   });
 }

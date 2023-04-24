@@ -10,8 +10,8 @@ class MethodChannelFlutterDebugMode extends FlutterDebugModePlatform {
   final methodChannel = const MethodChannel('flutter_debug_mode');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
-    return version;
+  Future<bool> isDebugMode() async {
+    final version = await methodChannel.invokeMethod<bool>('isDebugMode');
+    return version ?? false;
   }
 }

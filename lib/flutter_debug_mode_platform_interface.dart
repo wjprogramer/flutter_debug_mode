@@ -23,7 +23,7 @@ abstract class FlutterDebugModePlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
+  Future<bool> isDebugMode() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }
